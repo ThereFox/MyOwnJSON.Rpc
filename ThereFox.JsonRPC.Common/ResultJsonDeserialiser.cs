@@ -12,7 +12,7 @@ public static class ResultJsonDeserialiser
         {
             var result = JsonConvert.DeserializeObject<T>(jsonString);
 
-            if (result == null)
+            if (result == default)
             {
                 return Result.Failure<T>("Failed to deserialise request");
             }
