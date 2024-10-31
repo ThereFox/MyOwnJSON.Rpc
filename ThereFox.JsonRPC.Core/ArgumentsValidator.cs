@@ -74,7 +74,12 @@ public class ArgumentsValidator
     {
         var initType = value.GetType();
         
-        if (initType == typeof(T))
+        if (initType is string || typeof(T) == typeof(string))
+        {
+            return (T)value;
+        }
+        
+        if (initType is T)
         {
             return (T)value;
         }

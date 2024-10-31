@@ -20,4 +20,19 @@ public class AwaitedArguments
             return _defaultValue;
         }
     }
+
+    public AwaitedArguments(string name, Type type)
+    {
+        Name = name;
+        Type = type;
+        HasDefaultValue = false;
+    }
+
+    public AwaitedArguments(string name, Type type, object? defaultValue)
+    {
+        Name = name;
+        Type = type;
+        _defaultValue = defaultValue;
+        HasDefaultValue = true;
+    }
 }

@@ -7,7 +7,7 @@ using ThereFox.JsonRPC.Request;
 
 namespace ThereFox.JsonRPC;
 
-internal class RequestParser : IRequestParser
+public class RequestParser : IRequestParser
 {
     public Result<RequestContent> Parse(string requestBody)
     {
@@ -45,17 +45,22 @@ internal class RequestParser : IRequestParser
         return Result.Success(result);
     }
 
-    private Result<List<ArgumentValue>> ParseArguments(string arguments)
+    private Result<List<ArgumentValue>> ParseArguments(object arguments)
     {
-        var argumentType = JToken.Parse(arguments);
-
-        if (argumentType.Type == JTokenType.Array)
+        if (arguments is not JToken)
         {
-            return parseOrderedValues(arguments);
+            return Result.Failure<List<ArgumentValue>>("Arguments must be JObject");
         }
-        else if (argumentType.Type == JTokenType.Object)
+        
+        var JtokenValue = (JToken)arguments;
+
+        if (JtokenValue.Type == JTokenType.Array)
         {
-            return parseNamedValues(arguments);
+            return parseOrderedValues(JtokenValue.ToString());
+        }
+        else if (JtokenValue.Type == JTokenType.Object)
+        {
+            return parseNamedValues(JtokenValue.ToString());
         }
         else
         {
@@ -63,9 +68,19 @@ internal class RequestParser : IRequestParser
         }
     }
 
-    private bool isEmptyArgument(string arguments)
+    private bool isEmptyArgument(object arguments)
     {
-        return arguments.Trim().Length == 0;
+        if (arguments == default)
+        {
+            return true;
+        }
+
+        if (arguments is not JToken)
+        {
+            return true;
+        }
+
+        return false;
     }
     
     private Result<List<ArgumentValue>> parseOrderedValues(string arguments)
@@ -100,7 +115,7 @@ internal class RequestParser : IRequestParser
         foreach (var property in propertyes)
         {
             var name = property.Name;
-            var value = property.Value;
+            var value = property.Value.Value<string>();
             
             result.Add(new ArgumentValue(name, value));
         }
