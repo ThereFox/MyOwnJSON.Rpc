@@ -1,3 +1,5 @@
+using Example.Controllers;
+using ThereFox.JsonRPC.AspNet.Register.DIRegister;
 using ThereFox.JsonRPC.AspNet.Register.Filtrs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,16 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllers(
-    ex =>
-{
-    ex.Filters.Add<ResourceFiltr>();
-}
-    );
+builder.Services
+    .AddJsonRPC()
+    .AddJsonRPCStandartResponseFormatter();
+
 
 var app = builder.Build();
-
-app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -24,5 +22,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.Services.RegistrateActionController<SimpleController>();
+app.MapJsonRPCRoute("test");
 
 app.Run();

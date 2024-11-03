@@ -1,14 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
+using ThereFox.JsonRPC;
 
 namespace Example.Controllers;
 
-[Controller]
-public class SimpleController : Controller
+[RPCController]
+public class SimpleController
 {
-    [Route("/test/{id}")]
-    [HttpGet]
-    public IActionResult Do(int id, string appendedValue)
+
+    public void Action()
     {
-        return Json("test");
+        return;
+    }
+    [RPCAction("CustomActionName")]
+    public string Do(int id, string appendedValue)
+    {
+        return "test";
     }
 }
