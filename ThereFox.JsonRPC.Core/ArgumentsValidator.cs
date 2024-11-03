@@ -82,9 +82,9 @@ public class ArgumentsValidator
         var initType = value.GetType();
         
         
-        if (initType == destinateType)
+        if (initType == destinateType || isNumbersBoth(initType, destinateType))
         {
-            return Result.Success(value);
+            return Result.Success(Convert.ChangeType(value, destinateType));
         }
 
         if (initType == typeof(string))
@@ -110,6 +110,11 @@ public class ArgumentsValidator
         }
 
         return Result.Failure<T>("cannot parse");
+    }
+
+    private bool isNumbersBoth(Type a, Type b)
+    {
+        return a.IsPrimitive || b.IsPrimitive;
     }
     
 }

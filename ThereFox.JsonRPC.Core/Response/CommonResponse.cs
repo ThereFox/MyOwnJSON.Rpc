@@ -1,18 +1,32 @@
 using System.Text.Json.Serialization;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace ThereFox.JsonRPC.Response;
 
 public class CommonResponse
 {
-    [JsonPropertyName(("jsonrpc"))]
-    public string Version { get; }
+    public static CommonResponse VoidSucsess => new CommonResponse();
     
-    [JsonPropertyName("response")]
-    public string Arguments { get; }
+    public bool IsSucsessful { get; }
+    public object? Value { get; }
+    public string? ErrorSuggestion { get; }
 
-    public CommonResponse(string version, string argumentJson)
+    private CommonResponse()
     {
-        Version = version;
-        Arguments = argumentJson;
+        IsSucsessful = true;
+        ErrorSuggestion = null;
+        Value = default;
+    }
+    public CommonResponse(string response)
+    {
+        IsSucsessful = false;
+        ErrorSuggestion = response;
+        Value = default;
+    }
+    public CommonResponse(object value)
+    {
+        IsSucsessful = true;
+        ErrorSuggestion = null;
+        Value = value;
     }
 }
