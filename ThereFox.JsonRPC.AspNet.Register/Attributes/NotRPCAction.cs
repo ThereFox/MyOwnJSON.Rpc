@@ -1,6 +1,6 @@
 namespace ThereFox.JsonRPC;
 
-public class NotRPCAction
+public class NotRPCActionAttribute : Attribute
 {
     
 }

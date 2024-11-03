@@ -15,8 +15,4 @@
       <ProjectReference Include="..\ThereFox.JsonRPC.Core\ThereFox.JsonRPC.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Register\Abstractions\" />
-    </ItemGroup>
-
 </Project>

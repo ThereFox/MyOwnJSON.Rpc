@@ -6,8 +6,8 @@ namespace ThereFox.JsonRPC.AspNet.Register.DIRegister;
 
 public class RPCControllerRegister
 {
-    private Dictionary<string, Type> _endpointsToControllers { get; }
-    private HashSet<Type> _controllerTypes { get; }
+    private Dictionary<string, MethodInfo> _endpointsToControllers { get; } = new();
+    private HashSet<Type> _controllerTypes { get; } = new();
 
     public RPCControllerRegister Register<T>() => Register(typeof(T));
     public RPCControllerRegister Register(Type controllerType)
@@ -32,11 +32,11 @@ public class RPCControllerRegister
         return this;
     }
 
-    public Result<Type> GetControllerTypeByAction(string action)
+    public Result<MethodInfo> GetMethodByActionName(string action)
     {
         if(_endpointsToControllers.ContainsKey(action.ToLower()) == false)
         {
-            return Result.Failure<Type>("action not found");
+            return Result.Failure<MethodInfo>("action not found");
         }
 
         return Result.Success(_endpointsToControllers[action.ToLower()]);
@@ -70,7 +70,7 @@ public class RPCControllerRegister
                 throw new Exception($"Duplicate action name: {name}");
             }
 
-            _endpointsToControllers.Add(name.ToLower(), controllerType);
+            _endpointsToControllers.Add(name.ToLower(), action);
         }
     }
 
