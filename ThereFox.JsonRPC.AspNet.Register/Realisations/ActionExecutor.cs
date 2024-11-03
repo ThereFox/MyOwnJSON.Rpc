@@ -45,7 +45,7 @@ public class ActionExecutor : IActionExecutor
         {
             try
             {
-                var result = await (Task<object>)method.Invoke(controller, arguments.ToArray());
+                var result = await (Task<object>)method.Invoke(controller, arguments.Select(ex => ex.Value).ToArray());
                 return result;
             }
             catch (Exception e)
