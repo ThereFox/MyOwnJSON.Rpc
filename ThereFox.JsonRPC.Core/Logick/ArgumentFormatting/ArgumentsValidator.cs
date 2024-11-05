@@ -1,15 +1,24 @@
 using System.Globalization;
 using System.Reflection;
 using CSharpFunctionalExtensions;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ThereFox.JsonRPC.Common;
 using ThereFox.JsonRPC.Request;
+using ThereFox.JsonRPC.ValueConverter;
 
 namespace ThereFox.JsonRPC;
 
 public class ArgumentsValidator
 {
+    private readonly ArgumentConverter _argumentConverter;
+    
+    public ArgumentsValidator(ArgumentConverter argumentConverter)
+    {
+        _argumentConverter = argumentConverter;
+    }
+    
     public Result<List<ArgumentValue>> ValidateValues(List<ArgumentValue> settedValues, List<AwaitedArguments> awaitedArguments)
     {
         var countOfDefaultValues = awaitedArguments.Where(ex => ex.HasDefaultValue).Count();
@@ -64,10 +73,11 @@ public class ArgumentsValidator
 
         foreach (var argumentValue in avaliableValues.Where(ex => ex.Name == default))
         {
-            var parse = tryParse(
+            var parse = _argumentConverter.TryConvert(
                 argumentValue.Value, 
                 argument.Type
                 );
+            
             if (parse.IsSuccess)
             {
                 return new ArgumentValue(argument.Name, parse.Value);
@@ -75,46 +85,6 @@ public class ArgumentsValidator
         }
 
         return Result.Failure<ArgumentValue>("No value provided");
-    }
-
-    private Result<object> tryParse(object value, Type destinateType)
-    {
-        var initType = value.GetType();
-        
-        
-        if (initType == destinateType || isNumbersBoth(initType, destinateType))
-        {
-            return Result.Success(Convert.ChangeType(value, destinateType));
-        }
-
-        if (initType == typeof(string))
-        {
-            return ResultJsonDeserialiser.Deserialise((string)value, destinateType);
-        }
-
-        return Result.Failure("cannot parse");
-    }
-    private Result<T> tryParse<T>(object value)
-    {
-        var initType = value.GetType();
-        
-        
-        if (initType is T)
-        {
-            return Result.Success<T>((T)value);
-        }
-
-        if (initType == typeof(string))
-        {
-            return ResultJsonDeserialiser.Deserialise<T>((string)value);
-        }
-
-        return Result.Failure<T>("cannot parse");
-    }
-
-    private bool isNumbersBoth(Type a, Type b)
-    {
-        return a.IsPrimitive || b.IsPrimitive;
     }
     
 }

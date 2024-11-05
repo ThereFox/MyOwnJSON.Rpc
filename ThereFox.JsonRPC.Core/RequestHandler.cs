@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using ThereFox.JsonRPC.Interfaces;
 using ThereFox.JsonRPC.Response;
@@ -54,7 +55,7 @@ public class RequestHandler
         {
             return constructErrorResponse(callResult.Error);
         }
-
+        
         if (actionInfo.ReturnedType == typeof(void))
         {
             return CommonResponse.VoidSucsess;
