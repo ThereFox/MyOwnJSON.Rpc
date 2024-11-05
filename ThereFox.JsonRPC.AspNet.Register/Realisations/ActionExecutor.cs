@@ -42,55 +42,73 @@ public class ActionExecutor : IActionExecutor
     private async Task<Result<object>> ExecuteMethodInControllerAsync<TController>(TController controller, MethodInfo method,
         List<ArgumentValue> arguments)
     {
+        try
+        {
+            if (isAsyncMethod(method))
+            {
+                return await ExecuteAsyncMethod(controller, method, arguments);
+            }
+
+            return await ExecuteSyncMethodInAnoutherThread(controller, method, arguments);
+        }
+        catch (Exception e)
+        {
+            return Result.Failure<object>(e.Message);
+        }
+    }
+
+    private async Task<Result<object>> ExecuteAsyncMethod(object controller, MethodInfo method, List<ArgumentValue> arguments)
+    {
         if (
             method.ReturnType == typeof(Task)
             ||
             method.ReturnType == typeof(ValueTask)
         )
         {
-            {
                 var invokeResult = method.Invoke(controller, arguments.Select(ex => ex.Value).ToArray());
                 var task = (Task)invokeResult;
                 await task.ConfigureAwait(false);
                 return null;
-            }
         }
-        
+
         if (
             method.ReturnType.BaseType == typeof(ValueTask)
             ||
             method.ReturnType.BaseType == typeof(Task)
-            )
+        )
         {
-            try
-            {
                 var invokeResult = method.Invoke(controller, arguments.Select(ex => ex.Value).ToArray());
                 var task = (Task)invokeResult;
                 await task.ConfigureAwait(false);
                 return (object)((dynamic)task).Result;
-            }
-            catch (Exception e)
-            {
-                return Result.Failure<object>(e.Message);
-            }
         }
+        
+        return Result.Failure("this should never happen");
+    }
+    private async Task<Result<object>> ExecuteSyncMethodInAnoutherThread(
+        object controller,
+        MethodInfo method,
+        List<ArgumentValue> arguments)
+    {
+        return await Task.Run(
+            () => method.Invoke(
+                controller,
+                arguments
+                    .Select(ex => ex.Value)
+                    .ToArray()
+            )
+        );
+    }
 
-        try
-        {
-            var asyncCallSync = await Task.Run(
-                () => method.Invoke(
-                    controller,
-                    arguments
-                        .Select(ex => ex.Value)
-                        .ToArray()
-                    )
-                );
-
-            return asyncCallSync;
-        }
-        catch (Exception e)
-        {
-            return Result.Failure<object>(e.Message);
-        }
+    private bool isAsyncMethod(MethodInfo method)
+    {
+        return
+            method.ReturnType == typeof(Task)
+            ||
+            method.ReturnType == typeof(ValueTask)
+            ||
+            method.ReturnType.BaseType == typeof(ValueTask)
+            ||
+            method.ReturnType.BaseType == typeof(Task);
     }
 }
