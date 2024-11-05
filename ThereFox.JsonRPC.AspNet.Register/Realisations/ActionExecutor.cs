@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.InteropServices.JavaScript;
 using CSharpFunctionalExtensions;
 using ThereFox.JsonRPC.Interfaces;
 using ThereFox.JsonRPC.Request;
@@ -41,12 +42,32 @@ public class ActionExecutor : IActionExecutor
     private async Task<Result<object>> ExecuteMethodInControllerAsync<TController>(TController controller, MethodInfo method,
         List<ArgumentValue> arguments)
     {
-        if (method.ReturnType is Task)
+        if (
+            method.ReturnType == typeof(Task)
+            ||
+            method.ReturnType == typeof(ValueTask)
+        )
+        {
+            {
+                var invokeResult = method.Invoke(controller, arguments.Select(ex => ex.Value).ToArray());
+                var task = (Task)invokeResult;
+                await task.ConfigureAwait(false);
+                return null;
+            }
+        }
+        
+        if (
+            method.ReturnType.BaseType == typeof(ValueTask)
+            ||
+            method.ReturnType.BaseType == typeof(Task)
+            )
         {
             try
             {
-                var result = await (Task<object>)method.Invoke(controller, arguments.Select(ex => ex.Value).ToArray());
-                return result;
+                var invokeResult = method.Invoke(controller, arguments.Select(ex => ex.Value).ToArray());
+                var task = (Task)invokeResult;
+                await task.ConfigureAwait(false);
+                return (object)((dynamic)task).Result;
             }
             catch (Exception e)
             {
@@ -56,7 +77,14 @@ public class ActionExecutor : IActionExecutor
 
         try
         {
-            var asyncCallSync = await Task.Run(() => method.Invoke(controller, arguments.Select(ex => ex.Value).ToArray()));
+            var asyncCallSync = await Task.Run(
+                () => method.Invoke(
+                    controller,
+                    arguments
+                        .Select(ex => ex.Value)
+                        .ToArray()
+                    )
+                );
 
             return asyncCallSync;
         }
