@@ -1,10 +1,19 @@
 using ThereFox.JsonRPC;
 using ThereFox.JsonRPC.Request;
+using ThereFox.JsonRPC.ValueConverter;
 
 namespace CoreTests;
 
 public class ValidateOrderedTests
 {
+    private readonly ArgumentsValidator _sut;
+    
+    public ValidateOrderedTests()
+    {
+        var converter = new ArgumentConverter();
+        _sut = new ArgumentsValidator(converter);
+    }
+    
     [Fact]
     public void Validate_ValidateOrderedParams_ReturnsCorrectResult()
     {
@@ -16,9 +25,8 @@ public class ValidateOrderedTests
         {
             new AwaitedArguments("test", typeof(string))
         };
-        var argumentValidator = new ArgumentsValidator();
 
-        var validateResult = argumentValidator.ValidateValues(passedArguments, awaitedArguments);
+        var validateResult = _sut.ValidateValues(passedArguments, awaitedArguments);
 
         Assert.True(validateResult.IsSuccess);
         Assert.Equal(1, validateResult.Value.Count);
@@ -39,9 +47,8 @@ public class ValidateOrderedTests
             new AwaitedArguments("test", typeof(string)),
             new AwaitedArguments("test2", typeof(int))
         };
-        var argumentValidator = new ArgumentsValidator();
 
-        var validateResult = argumentValidator.ValidateValues(passedArguments, awaitedArguments);
+        var validateResult = _sut.ValidateValues(passedArguments, awaitedArguments);
 
         Assert.True(validateResult.IsSuccess);
         Assert.Equal(2, validateResult.Value.Count);
@@ -64,9 +71,8 @@ public class ValidateOrderedTests
             new AwaitedArguments("test", typeof(string)),
             new AwaitedArguments("test2", typeof(int), 123)
         };
-        var argumentValidator = new ArgumentsValidator();
 
-        var validateResult = argumentValidator.ValidateValues(passedArguments, awaitedArguments);
+        var validateResult = _sut.ValidateValues(passedArguments, awaitedArguments);
 
         Assert.True(validateResult.IsSuccess);
         Assert.Equal(2, validateResult.Value.Count);
@@ -87,9 +93,8 @@ public class ValidateOrderedTests
         {
             new AwaitedArguments("test2", typeof(int), 123)
         };
-        var argumentValidator = new ArgumentsValidator();
 
-        var validateResult = argumentValidator.ValidateValues(passedArguments, awaitedArguments);
+        var validateResult = _sut.ValidateValues(passedArguments, awaitedArguments);
 
         Assert.True(validateResult.IsSuccess);
         Assert.Equal(1, validateResult.Value.Count);
@@ -109,9 +114,8 @@ public class ValidateOrderedTests
             new AwaitedArguments("test2", typeof(string), "123"),
             new AwaitedArguments("test3", typeof(int), 123),
         };
-        var argumentValidator = new ArgumentsValidator();
 
-        var validateResult = argumentValidator.ValidateValues(passedArguments, awaitedArguments);
+        var validateResult = _sut.ValidateValues(passedArguments, awaitedArguments);
 
         Assert.True(validateResult.IsSuccess);
         Assert.Equal(3, validateResult.Value.Count);
@@ -136,9 +140,7 @@ public class ValidateOrderedTests
             new AwaitedArguments("test1", typeof(int)),
             new AwaitedArguments("test2", typeof(string))
         };
-        var argumentValidator = new ArgumentsValidator();
-
-        var validateResult = argumentValidator.ValidateValues(passedArguments, awaitedArguments);
+        var validateResult = _sut.ValidateValues(passedArguments, awaitedArguments);
 
         Assert.True(validateResult.IsSuccess);
         Assert.Equal(2, validateResult.Value.Count);

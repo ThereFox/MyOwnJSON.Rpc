@@ -1,10 +1,20 @@
+using System.ComponentModel.DataAnnotations;
 using ThereFox.JsonRPC;
 using ThereFox.JsonRPC.Request;
+using ThereFox.JsonRPC.ValueConverter;
 
 namespace CoreTests;
 
 public class ValidatorNamedTests
 {
+    private readonly ArgumentsValidator _sut;
+    
+    public ValidatorNamedTests()
+    {
+        var converter = new ArgumentConverter();
+        _sut = new ArgumentsValidator(converter);
+    }
+    
     [Fact]
     public void Validate_FullCompareNamedParam_ShouldReturnTrue()
     {
@@ -16,9 +26,8 @@ public class ValidatorNamedTests
         {
             new AwaitedArguments("Test", typeof(string))
         };
-        var Validator = new ArgumentsValidator();
         
-        var validateResult = Validator.ValidateValues(values, awaitedArguments);
+        var validateResult = _sut.ValidateValues(values, awaitedArguments);
         
         Assert.True(validateResult.IsSuccess);
         Assert.True(validateResult.Value.Count == 1);
@@ -37,9 +46,8 @@ public class ValidatorNamedTests
             new AwaitedArguments("Test", typeof(string)),
             new AwaitedArguments("NotTest", typeof(string), "empty")
         };
-        var Validator = new ArgumentsValidator();
         
-        var validateResult = Validator.ValidateValues(values, awaitedArguments);
+        var validateResult = _sut.ValidateValues(values, awaitedArguments);
         
         Assert.True(validateResult.IsSuccess);
         Assert.True(validateResult.Value.Count == 2);
@@ -60,9 +68,8 @@ public class ValidatorNamedTests
             new AwaitedArguments("Test", typeof(string)),
             new AwaitedArguments("NotTest", typeof(string))
         };
-        var Validator = new ArgumentsValidator();
         
-        var validateResult = Validator.ValidateValues(values, awaitedArguments);
+        var validateResult = _sut.ValidateValues(values, awaitedArguments);
         
         Assert.True(validateResult.IsFailure);
     }
@@ -79,9 +86,8 @@ public class ValidatorNamedTests
             new AwaitedArguments("Test", typeof(string)),
             new AwaitedArguments("NotTest", typeof(string))
         };
-        var Validator = new ArgumentsValidator();
         
-        var validateResult = Validator.ValidateValues(values, awaitedArguments);
+        var validateResult = _sut.ValidateValues(values, awaitedArguments);
         
         Assert.True(validateResult.IsFailure);
     }
@@ -96,9 +102,8 @@ public class ValidatorNamedTests
         var awaitedArguments = new List<AwaitedArguments>()
         {
         };
-        var Validator = new ArgumentsValidator();
         
-        var validateResult = Validator.ValidateValues(values, awaitedArguments);
+        var validateResult = _sut.ValidateValues(values, awaitedArguments);
         
         Assert.True(validateResult.IsSuccess);
         Assert.True(validateResult.Value.Count == 0);
@@ -114,9 +119,8 @@ public class ValidatorNamedTests
             new AwaitedArguments("Test", typeof(string)),
             new AwaitedArguments("NotTest", typeof(string))
         };
-        var Validator = new ArgumentsValidator();
         
-        var validateResult = Validator.ValidateValues(values, awaitedArguments);
+        var validateResult = _sut.ValidateValues(values, awaitedArguments);
         
         Assert.True(validateResult.IsFailure);
     }

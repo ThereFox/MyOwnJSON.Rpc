@@ -24,11 +24,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Tests.Unit.Client\Tests.Unit.Client.csproj" />
       <ProjectReference Include="..\ThereFox.JsonRPC.AspNet.Register\ThereFox.JsonRPC.AspNet.Register.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="TestsFolders\" />
+      <Folder Include="RequestHandler\" />
     </ItemGroup>
 
 </Project>

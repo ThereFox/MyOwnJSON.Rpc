@@ -1,6 +1,10 @@
+using ThereFox.JsonRPC;
+using ThereFox.JsonRPC.AspNet.Register;
+
 namespace RegistrationTests.TestControllers;
 
-public class SimpleController
+[RPCController]
+public class SimpleController : RPCController
 {
     public void SampleActionName()
     {
