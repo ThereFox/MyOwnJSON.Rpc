@@ -28,4 +28,26 @@ public class SimpleController : RPCController
         return "TestValue";
     }
     
+    public void SampleActionNameWithParam(string args)
+    {
+        return;
+    }
+
+    public string SampleActionNameWithParamAndReturnType(string args)
+    {
+        return args;
+    }
+
+    public async Task SampleActionNameWithParamAsync(string args)
+    {
+        await Task.CompletedTask;
+        return;
+    }
+    
+    public async Task<string> SampleActionNameWithParamAndReturnTypeAsync(string args)
+    {
+        await Task.CompletedTask;
+        return args;
+    }
+    
 }

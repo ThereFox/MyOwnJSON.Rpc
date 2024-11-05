@@ -82,4 +82,61 @@ public class SimpleControllerTests
         Assert.Equal("TestValue", handlResult.Value);
     }
     
+    [Fact]
+    public async Task RequestHandler_RunMethodWitParamsAndWithVoidReturnType_()
+    {
+        var actionName = "SampleActionNameWithParam";
+        var request = _requestBuilder.CreateRequest(actionName, new List<object>() { "test" });
+        
+        var handlResult = await _sut.HandleAsync(request);
+        
+        Assert.True(handlResult.IsSucsessful);
+        Assert.Null(handlResult.Value);
+        Assert.Null(handlResult.ErrorSuggestion);
+    }
+    
+    [Fact]
+    public async Task RequestHandler_RunMethodWithParamsAndWithReturnType_()
+    {
+        var argument = "test";
+        
+        var actionName = "SampleActionNameWithParamAndReturnType";
+        var request = _requestBuilder.CreateRequest(actionName, new List<object>() { argument });
+        
+        var handlResult = await _sut.HandleAsync(request);
+        
+        Assert.True(handlResult.IsSucsessful);
+        Assert.NotNull(handlResult.Value);
+        Assert.Equal(argument, handlResult.Value);
+    }
+    
+    [Fact]
+    public async Task RequestHandler_RunMethodWithParamsAndWithoutReturnTypeAsync_()
+    {
+        var argument = "test";
+        
+        var actionName = "SampleActionNameWithParamAsync";
+        var request = _requestBuilder.CreateRequest(actionName, new List<object>() { argument });
+        
+        var handlResult = await _sut.HandleAsync(request);
+        
+        Assert.True(handlResult.IsSucsessful);
+        Assert.Null(handlResult.Value);
+    }
+    
+    [Fact]
+    public async Task RequestHandler_RunMethodWithParamsAndWithReturnTypeAsync_()
+    {
+        var argument = "test";
+        
+        var actionName = "SampleActionNameWithParamAndReturnTypeAsync";
+        var request = _requestBuilder.CreateRequest(actionName, new List<object>() { argument });
+        
+        var handlResult = await _sut.HandleAsync(request);
+        
+        Assert.True(handlResult.IsSucsessful);
+        Assert.NotNull(handlResult.Value);
+        Assert.Equal(argument, handlResult.Value);
+    }
+    
 }
