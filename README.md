@@ -1,3 +1,8 @@
+# What it is
+
+Is Simple realisation of JSONRPC server/client lib elements.
+
+
 # How to use it
 
 ## Server
