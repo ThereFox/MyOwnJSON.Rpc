@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ThereFox.JsonRPC.AspNet.Register\ThereFox.JsonRPC.AspNet.Register.csproj" />
       <ProjectReference Include="..\ThereFox.JsonRPC.Core\ThereFox.JsonRPC.Core.csproj" />
     </ItemGroup>
 
