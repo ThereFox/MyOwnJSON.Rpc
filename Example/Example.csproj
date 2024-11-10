@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ThereFox.JsonRPC.AspNet.Register\ThereFox.JsonRPC.AspNet.Register.csproj" />
+      <ProjectReference Include="..\ThereFox.JsonRPC.Core.Client\ThereFox.JsonRPC.Core.Client.csproj" />
     </ItemGroup>
 
 </Project>

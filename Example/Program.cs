@@ -1,6 +1,7 @@
 using Example.Controllers;
 using ThereFox.JsonRPC.AspNet.Register.DIRegister;
 using ThereFox.JsonRPC.AspNet.Register.Filtrs;
+using ThereFox.JsonRPC.Core.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.RegistrateJSONRpcClient($"http://localhost:5223/test");
 
 builder.Services
     .AddJsonRPC()
