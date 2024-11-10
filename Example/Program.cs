@@ -23,7 +23,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Services.RegistrateActionController<SimpleController>();
+//app.Services.RegistrateActionController<SimpleController>();
+app.Services.RegistrateActionControllersFromAssembly(typeof(Program).Assembly);
+
 app.MapJsonRPCRoute("test");
 
 app.Run();
