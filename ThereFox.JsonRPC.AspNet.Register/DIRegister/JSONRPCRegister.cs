@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using ThereFox.JsonRPC.AspNet.Register.Filtrs;
 using ThereFox.JsonRPC.AspNet.Register.Responses;
@@ -40,6 +41,24 @@ public static class JSONRPCRegister
 
         service.Register<T>();
         
+        return services;
+    }
+
+    public static IServiceProvider RegistrateActionControllersFromAssembly(this IServiceProvider services,
+        Assembly assembly)
+    {
+        var service = services.GetService<RPCControllerRegister>();
+
+        var controllerTypes = assembly.GetExportedTypes().Where(
+            ex => ex.GetCustomAttributes(true)
+                .Any(ex => ex is RPCControllerAttribute)
+        );
+
+        foreach (var controller in controllerTypes)
+        {
+            service.Register(controller);
+        }
+
         return services;
     }
     
