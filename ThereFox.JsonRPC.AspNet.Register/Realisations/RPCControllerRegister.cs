@@ -17,11 +17,9 @@ public class RPCControllerRegister
             return this;
         }
         
-        var isRpcController = controllerType
-            .GetCustomAttributes(true)
-            .Any(ex => ex is RPCControllerAttribute);
+        
 
-        if (isRpcController == false)
+        if (isRpcController(controllerType) == false)
         {
             throw new InvalidCastException($"controller type {controllerType} is not a RPC controller");
         }
@@ -49,6 +47,7 @@ public class RPCControllerRegister
             .Where(
                 ex => 
                     ex.IsPublic &&
+                    (ex.DeclaringType == controllerType || isRpcController(ex.DeclaringType)) &&
                     ex.IsConstructor == false &&
                     ex.IsAbstract == false &&
                     ex.IsStatic == false &&
@@ -74,6 +73,13 @@ public class RPCControllerRegister
         }
     }
 
+    private bool isRpcController(Type type)
+    {
+        return type
+            .GetCustomAttributes(true)
+            .Any(ex => ex is RPCControllerAttribute);
+    }
+    
     private bool hasCustomName(MethodInfo method)
     {
         return method
